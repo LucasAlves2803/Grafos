@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include<fstream>
 #include <vector>
@@ -10,15 +11,23 @@ void printvi(int);
 void constroi(int);
 void imprime(int);
 string nome();
+int componente_conexa(int);
+int componente(int,int, int []);
+void zera(int [], int);
 vector <int> vizinho [MAXN];
 int ma [MAXN][MAXN];
 
 int main(){
     int n = number();
+    int componentes=0;
     constroi(n);
     imprime(n);
     vizinhaca(n);
     printvi(n);
+    if ( (componentes= componente_conexa(n)) == 1)
+        cout << "O grafo é conexo" << endl;
+   else
+        cout << "O grafo não é conexo, ele tem "<< componentes << " componentes conexas"<< endl;
     return 0;
 }
 
@@ -50,22 +59,21 @@ string nome (void){
 }
 
 void vizinhaca (int n){
-    int i,j,cont=0;
+    int i,j;
     for (i=0; i <n;i++){
         for (j=0;j<n; j++){
                 if (ma[i][j] == 1)
                         vizinho[i].push_back(j);
         }
-    cont =0;
     }
 }
 
 void printvi (int n){
-    int i,j,cont;
+    int i,j;
     for (i=0; i <n;i++){
-    cout << "Os vizinhos dos vertice " << i+1 << "s�o";
+    cout << "Os vizinhos dos vertice " << i+1 << " são: ";
         for (j=0; j < int(vizinho[i].size()); j++){
-            cout << vizinho[i][j]+1;
+            cout << vizinho[i][j]+1 << " ";
         }
     cout << endl;
     }
@@ -108,4 +116,44 @@ bool a;
         }
         cout <<"A matriz de adjacencia do grafo foi salva no arquivo " << gname <<".txt" <<endl;
     }
+}
+
+int componente_conexa(int n){
+	int v,comp=0,vi[n];
+	zera(vi,n);
+	for (v=0; v < n; v++ ){
+	   comp += componente(v,n,vi);
+	}
+	return comp;
+}
+
+
+int componente(int v, int n, int vi[]){
+	int fila[n];
+	int i,pos=0,pr=0;
+	zera(fila,n);
+	pos = pr +1;
+	fila[pr] = v;
+	if (vi[v] == 1)
+		return 0;
+	else{
+		vi[v]= 1;
+	while (v >= 0){
+		
+	  for (i=0; i < n; i++){	
+		if (ma[i][v] == 1 && vi[i] == -1){
+			fila[(pos++)%n] = i;
+			vi[i]= 1;
+	   }		
+	}
+	fila[(pr++)%n] = -1;
+	v= fila[pr%n];
+   }
+   return 1;
+ }
+}
+	
+void zera (int fila[], int n){
+	for (int i=0; i < n; i++)
+		fila[i] = -1;
 }
